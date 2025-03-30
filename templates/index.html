@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Capital Gains Tax Calculator</title>
+    <!-- Bootstrap CSS for styling -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Optional: your custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">Capital Gains Tax Calculator</h1>
+        <!-- Tabs for assets -->
+        <ul class="nav nav-tabs" id="assetTabs" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="btc-tab" data-toggle="tab" href="#btc" role="tab" aria-controls="btc" aria-selected="true">BTC</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="tsla-tab" data-toggle="tab" href="#tsla" role="tab" aria-controls="tsla" aria-selected="false">TESLA</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="sol-tab" data-toggle="tab" href="#sol" role="tab" aria-controls="sol" aria-selected="false">SOL</a>
+          </li>
+        </ul>
+        <div class="tab-content" id="assetTabsContent">
+          <!-- BTC Tab -->
+          <div class="tab-pane fade show active" id="btc" role="tabpanel" aria-labelledby="btc-tab">
+            <form id="form-btc" class="mt-3">
+              <div class="form-group">
+                <label for="costBasis-btc">Cost Basis (adj) ($):</label>
+                <input type="number" class="form-control" id="costBasis-btc" placeholder="Enter cost basis">
+              </div>
+              <div class="form-group">
+                <label for="amountHeld-btc">Amount Held (Qty):</label>
+                <input type="number" class="form-control" id="amountHeld-btc" placeholder="Enter amount held">
+              </div>
+              <div class="form-group">
+                <label for="salePrice-btc">Sale Price ($):</label>
+                <input type="number" class="form-control" id="salePrice-btc" placeholder="Enter sale price">
+              </div>
+              <button type="button" class="btn btn-primary" onclick="calculate('btc')">Calculate</button>
+            </form>
+            <div id="result-btc" class="mt-3"></div>
+          </div>
+          <!-- TESLA Tab -->
+          <div class="tab-pane fade" id="tsla" role="tabpanel" aria-labelledby="tsla-tab">
+            <form id="form-tsla" class="mt-3">
+              <div class="form-group">
+                <label for="costBasis-tsla">Cost Basis (adj) ($):</label>
+                <input type="number" class="form-control" id="costBasis-tsla" placeholder="Enter cost basis">
+              </div>
+              <div class="form-group">
+                <label for="amountHeld-tsla">Amount Held (Qty):</label>
+                <input type="number" class="form-control" id="amountHeld-tsla" placeholder="Enter amount held">
+              </div>
+              <div class="form-group">
+                <label for="salePrice-tsla">Sale Price ($):</label>
+                <input type="number" class="form-control" id="salePrice-tsla" placeholder="Enter sale price">
+              </div>
+              <button type="button" class="btn btn-primary" onclick="calculate('tsla')">Calculate</button>
+            </form>
+            <div id="result-tsla" class="mt-3"></div>
+          </div>
+          <!-- SOL Tab -->
+          <div class="tab-pane fade" id="sol" role="tabpanel" aria-labelledby="sol-tab">
+            <form id="form-sol" class="mt-3">
+              <div class="form-group">
+                <label for="costBasis-sol">Cost Basis (adj) ($):</label>
+                <input type="number" class="form-control" id="costBasis-sol" placeholder="Enter cost basis">
+              </div>
+              <div class="form-group">
+                <label for="amountHeld-sol">Amount Held (Qty):</label>
+                <input type="number" class="form-control" id="amountHeld-sol" placeholder="Enter amount held">
+              </div>
+              <div class="form-group">
+                <label for="salePrice-sol">Sale Price ($):</label>
+                <input type="number" class="form-control" id="salePrice-sol" placeholder="Enter sale price">
+              </div>
+              <button type="button" class="btn btn-primary" onclick="calculate('sol')">Calculate</button>
+            </form>
+            <div id="result-sol" class="mt-3"></div>
+          </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Inline JS for demonstration; you could also move this to static/js/script.js -->
+    <script>
+      function calculate(asset) {
+        // Get values from the form fields based on asset (btc, tsla, sol)
+        const costBasis = document.getElementById(`costBasis-${asset}`).value;
+        const amountHeld = document.getElementById(`amountHeld-${asset}`).value;
+        const salePrice = document.getElementById(`salePrice-${asset}`).value;
+        
+        // Prepare the data payload for the Python backend
+        const payload = {
+          asset: asset,
+          costBasis: costBasis,
+          amountHeld: amountHeld,
+          salePrice: salePrice
+        };
+        
+        // Call the Flask endpoint with fetch (adjust URL if needed)
+        fetch('/calculate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+          const resultDiv = document.getElementById(`result-${asset}`);
+          resultDiv.innerHTML = `
+            <h4>Short-Term Gains</h4>
+            <p>Tax Rate: ${data.shortTerm.taxRate}%</p>
+            <p>Net Gains: $${data.shortTerm.netGains.toFixed(2)}</p>
+            <p>Tax Owed: $${data.shortTerm.taxOwed.toFixed(2)}</p>
+            <p>Net Proceeds: $${data.shortTerm.netProceeds.toFixed(2)}</p>
+            <hr>
+            <h4>Long-Term Gains</h4>
+            <p>Tax Rate: ${data.longTerm.taxRate}%</p>
+            <p>Net Gains: $${data.longTerm.netGains.toFixed(2)}</p>
+            <p>Tax Owed: $${data.longTerm.taxOwed.toFixed(2)}</p>
+            <p>Net Proceeds: $${data.longTerm.netProceeds.toFixed(2)}</p>
+          `;
+        })
+        .catch(error => console.error('Error:', error));
+      }
+    </script>
+</body>
+</html>
