@@ -1,0 +1,70 @@
+
+body {
+    background-color: #f5f8fa;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Main container styling */
+  .container {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    padding: 30px;
+  }
+  
+  /* Headings */
+  h1, h2, h3, h4 {
+    font-weight: 600;
+    color: #333;
+  }
+  
+  /* Nav-tabs customization */
+  .nav-tabs {
+    border-bottom: none;
+    margin-bottom: 20px;
+  }
+  
+  .nav-tabs .nav-link {
+    border: none;
+    background: transparent;
+    padding: 10px 20px;
+    font-weight: 600;
+    border-bottom: 2px solid transparent;
+    color: #333;
+  }
+  
+  .nav-tabs .nav-link.active {
+    color: #06b0a8; /* Robinhood-inspired green */
+    border-bottom: 2px solid #06b0a8;
+  }
+  
+  /* Form input styling */
+  .form-control {
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    box-shadow: none;
+  }
+  
+  /* Button styling */
+  .btn-primary {
+    background-color: #06b0a8;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-primary:hover {
+    background-color: #05a096;
+  }
+  
+  
+  .form-check {
+    margin-top: 15px;
+  }
+  

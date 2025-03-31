@@ -5,14 +5,14 @@
     <title>Capital Gains Tax Calculator</title>
     <!-- Bootstrap CSS for styling -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Optional: your custom CSS -->
+    <!-- Custom CSS for Robinhood-inspired design -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1 class="my-4">Capital Gains Tax Calculator</h1>
+    <div class="container my-5">
+        <h1 class="text-center mb-4">Capital Gains Tax Calculator</h1>
         <!-- Tabs for assets -->
-        <ul class="nav nav-tabs" id="assetTabs" role="tablist">
+        <ul class="nav nav-tabs justify-content-center mb-4" id="assetTabs" role="tablist">
           <li class="nav-item">
             <a class="nav-link active" id="btc-tab" data-toggle="tab" href="#btc" role="tab" aria-controls="btc" aria-selected="true">BTC</a>
           </li>
@@ -39,9 +39,13 @@
                 <label for="salePrice-btc">Sale Price ($):</label>
                 <input type="number" class="form-control" id="salePrice-btc" placeholder="Enter sale price">
               </div>
-              <button type="button" class="btn btn-primary" onclick="calculate('btc')">Calculate</button>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="includeCostBasis-btc">
+                <label class="form-check-label" for="includeCostBasis-btc">Include Original Cost Basis</label>
+              </div>
+              <button type="button" class="btn btn-primary mt-3" onclick="calculate('btc')">Calculate</button>
             </form>
-            <div id="result-btc" class="mt-3"></div>
+            <div id="result-btc" class="mt-4"></div>
           </div>
           <!-- TESLA Tab -->
           <div class="tab-pane fade" id="tsla" role="tabpanel" aria-labelledby="tsla-tab">
@@ -58,9 +62,13 @@
                 <label for="salePrice-tsla">Sale Price ($):</label>
                 <input type="number" class="form-control" id="salePrice-tsla" placeholder="Enter sale price">
               </div>
-              <button type="button" class="btn btn-primary" onclick="calculate('tsla')">Calculate</button>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="includeCostBasis-tsla">
+                <label class="form-check-label" for="includeCostBasis-tsla">Include Original Cost Basis</label>
+              </div>
+              <button type="button" class="btn btn-primary mt-3" onclick="calculate('tsla')">Calculate</button>
             </form>
-            <div id="result-tsla" class="mt-3"></div>
+            <div id="result-tsla" class="mt-4"></div>
           </div>
           <!-- SOL Tab -->
           <div class="tab-pane fade" id="sol" role="tabpanel" aria-labelledby="sol-tab">
@@ -77,9 +85,13 @@
                 <label for="salePrice-sol">Sale Price ($):</label>
                 <input type="number" class="form-control" id="salePrice-sol" placeholder="Enter sale price">
               </div>
-              <button type="button" class="btn btn-primary" onclick="calculate('sol')">Calculate</button>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="includeCostBasis-sol">
+                <label class="form-check-label" for="includeCostBasis-sol">Include Original Cost Basis</label>
+              </div>
+              <button type="button" class="btn btn-primary mt-3" onclick="calculate('sol')">Calculate</button>
             </form>
-            <div id="result-sol" class="mt-3"></div>
+            <div id="result-sol" class="mt-4"></div>
           </div>
         </div>
     </div>
@@ -88,23 +100,26 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <!-- Inline JS for demonstration; you could also move this to static/js/script.js -->
+    <!-- Inline JS for demonstration; you can also separate it into static/js/script.js -->
     <script>
       function calculate(asset) {
         // Get values from the form fields based on asset (btc, tsla, sol)
         const costBasis = document.getElementById(`costBasis-${asset}`).value;
         const amountHeld = document.getElementById(`amountHeld-${asset}`).value;
         const salePrice = document.getElementById(`salePrice-${asset}`).value;
+        // Get the state of the "Include Original Cost Basis" toggle
+        const includeCostBasis = document.getElementById(`includeCostBasis-${asset}`).checked;
         
         // Prepare the data payload for the Python backend
         const payload = {
           asset: asset,
           costBasis: costBasis,
           amountHeld: amountHeld,
-          salePrice: salePrice
+          salePrice: salePrice,
+          includeCostBasis: includeCostBasis
         };
         
-        // Call the Flask endpoint with fetch (adjust URL if needed)
+        // Call the Flask endpoint with fetch
         fetch('/calculate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -125,6 +140,10 @@
             <p>Net Gains: $${data.longTerm.netGains.toFixed(2)}</p>
             <p>Tax Owed: $${data.longTerm.taxOwed.toFixed(2)}</p>
             <p>Net Proceeds: $${data.longTerm.netProceeds.toFixed(2)}</p>
+            <hr>
+            <h4>Break-Even Price</h4>
+            <p>$${data.breakEven.toFixed(2)}</p>
+            <p><small>Included Original Cost Basis: ${data.includeCostBasis}</small></p>
           `;
         })
         .catch(error => console.error('Error:', error));
