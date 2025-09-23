@@ -1,153 +1,204 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Capital Gains Tax Calculator</title>
-    <!-- Bootstrap CSS for styling -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Custom CSS for Robinhood-inspired design -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <meta charset="utf-8">
+  <title>Capital Gains Tax Calculator</title>
+
+  <!-- CRITICAL for mobile sizing -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <!-- Your styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
-<body>
-    <div class="container my-5">
-        <h1 class="text-center mb-4">Capital Gains Tax Calculator</h1>
-        <!-- Tabs for assets -->
-        <ul class="nav nav-tabs justify-content-center mb-4" id="assetTabs" role="tablist">
-          <li class="nav-item">
-            <a class="nav-link active" id="btc-tab" data-toggle="tab" href="#btc" role="tab" aria-controls="btc" aria-selected="true">BTC</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="tsla-tab" data-toggle="tab" href="#tsla" role="tab" aria-controls="tsla" aria-selected="false">TESLA</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="sol-tab" data-toggle="tab" href="#sol" role="tab" aria-controls="sol" aria-selected="false">SOL</a>
-          </li>
-        </ul>
-        <div class="tab-content" id="assetTabsContent">
-          <!-- BTC Tab -->
-          <div class="tab-pane fade show active" id="btc" role="tabpanel" aria-labelledby="btc-tab">
-            <form id="form-btc" class="mt-3">
-              <div class="form-group">
-                <label for="costBasis-btc">Cost Basis (adj) ($):</label>
-                <input type="number" class="form-control" id="costBasis-btc" placeholder="Enter cost basis">
-              </div>
-              <div class="form-group">
-                <label for="amountHeld-btc">Amount Held (Qty):</label>
-                <input type="number" class="form-control" id="amountHeld-btc" placeholder="Enter amount held">
-              </div>
-              <div class="form-group">
-                <label for="salePrice-btc">Sale Price ($):</label>
-                <input type="number" class="form-control" id="salePrice-btc" placeholder="Enter sale price">
-              </div>
-              <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="includeCostBasis-btc">
-                <label class="form-check-label" for="includeCostBasis-btc">Include Original Cost Basis</label>
-              </div>
-              <button type="button" class="btn btn-primary mt-3" onclick="calculate('btc')">Calculate</button>
-            </form>
-            <div id="result-btc" class="mt-4"></div>
+<body class="bg-app">
+
+  <!-- Full-height wrapper so content fills the screen -->
+  <div class="app-wrapper d-flex flex-column min-vh-100">
+
+    <header class="app-header py-3 px-3 px-md-4 bg-white border-bottom">
+      <h1 class="h4 mb-0 text-center">Capital Gains Tax Calculator</h1>
+    </header>
+
+    <main class="flex-fill">
+      <!-- Use container-fluid on mobile, constrain with max-width via CSS -->
+      <div class="container-fluid py-3">
+        <section class="app-card mx-auto">
+
+          <!-- Tabs -->
+          <ul class="nav nav-tabs justify-content-between mb-3" id="assetTabs" role="tablist">
+            <li class="nav-item flex-fill text-center">
+              <a class="nav-link active" id="btc-tab" data-toggle="tab" href="#btc" role="tab"
+                 aria-controls="btc" aria-selected="true">BTC</a>
+            </li>
+            <li class="nav-item flex-fill text-center">
+              <a class="nav-link" id="tsla-tab" data-toggle="tab" href="#tsla" role="tab"
+                 aria-controls="tsla" aria-selected="false">TESLA</a>
+            </li>
+            <li class="nav-item flex-fill text-center">
+              <a class="nav-link" id="sol-tab" data-toggle="tab" href="#sol" role="tab"
+                 aria-controls="sol" aria-selected="false">SOL</a>
+            </li>
+          </ul>
+
+          <div class="tab-content" id="assetTabsContent">
+            <!-- BTC -->
+            <div class="tab-pane fade show active" id="btc" role="tabpanel" aria-labelledby="btc-tab">
+              <form id="form-btc" class="mt-2">
+                <div class="form-group">
+                  <label for="costBasis-btc">Cost Basis (adj) ($)</label>
+                  <input type="number" inputmode="decimal" step="any"
+                         class="form-control form-control-lg"
+                         id="costBasis-btc" placeholder="e.g., 10000">
+                </div>
+                <div class="form-group">
+                  <label for="amountHeld-btc">Amount Held (Qty)</label>
+                  <input type="number" inputmode="decimal" step="any"
+                         class="form-control form-control-lg"
+                         id="amountHeld-btc" placeholder="e.g., 0.5">
+                </div>
+                <div class="form-group">
+                  <label for="salePrice-btc">Sale Price ($)</label>
+                  <input type="number" inputmode="decimal" step="any"
+                         class="form-control form-control-lg"
+                         id="salePrice-btc" placeholder="e.g., 64000">
+                </div>
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="includeCostBasis-btc">
+                  <label class="custom-control-label" for="includeCostBasis-btc">
+                    Include Original Cost Basis
+                  </label>
+                </div>
+                <button type="button" class="btn btn-primary btn-lg btn-block mt-3"
+                        onclick="calculate('btc')">Calculate</button>
+              </form>
+              <div id="result-btc" class="result-box mt-3"></div>
+            </div>
+
+            <!-- TESLA -->
+            <div class="tab-pane fade" id="tsla" role="tabpanel" aria-labelledby="tsla-tab">
+              <form id="form-tsla" class="mt-2">
+                <div class="form-group">
+                  <label for="costBasis-tsla">Cost Basis (adj) ($)</label>
+                  <input type="number" inputmode="decimal" step="any"
+                         class="form-control form-control-lg"
+                         id="costBasis-tsla" placeholder="e.g., 5000">
+                </div>
+                <div class="form-group">
+                  <label for="amountHeld-tsla">Amount Held (Qty)</label>
+                  <input type="number" inputmode="decimal" step="any"
+                         class="form-control form-control-lg"
+                         id="amountHeld-tsla" placeholder="e.g., 10">
+                </div>
+                <div class="form-group">
+                  <label for="salePrice-tsla">Sale Price ($)</label>
+                  <input type="number" inputmode="decimal" step="any"
+                         class="form-control form-control-lg"
+                         id="salePrice-tsla" placeholder="e.g., 220">
+                </div>
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="includeCostBasis-tsla">
+                  <label class="custom-control-label" for="includeCostBasis-tsla">
+                    Include Original Cost Basis
+                  </label>
+                </div>
+                <button type="button" class="btn btn-primary btn-lg btn-block mt-3"
+                        onclick="calculate('tsla')">Calculate</button>
+              </form>
+              <div id="result-tsla" class="result-box mt-3"></div>
+            </div>
+
+            <!-- SOL -->
+            <div class="tab-pane fade" id="sol" role="tabpanel" aria-labelledby="sol-tab">
+              <form id="form-sol" class="mt-2">
+                <div class="form-group">
+                  <label for="costBasis-sol">Cost Basis (adj) ($)</label>
+                  <input type="number" inputmode="decimal" step="any"
+                         class="form-control form-control-lg"
+                         id="costBasis-sol" placeholder="e.g., 2000">
+                </div>
+                <div class="form-group">
+                  <label for="amountHeld-sol">Amount Held (Qty)</label>
+                  <input type="number" inputmode="decimal" step="any"
+                         class="form-control form-control-lg"
+                         id="amountHeld-sol" placeholder="e.g., 50">
+                </div>
+                <div class="form-group">
+                  <label for="salePrice-sol">Sale Price ($)</label>
+                  <input type="number" inputmode="decimal" step="any"
+                         class="form-control form-control-lg"
+                         id="salePrice-sol" placeholder="e.g., 150">
+                </div>
+                <div class="custom-control custom-switch">
+                  <input type="checkbox" class="custom-control-input" id="includeCostBasis-sol">
+                  <label class="custom-control-label" for="includeCostBasis-sol">
+                    Include Original Cost Basis
+                  </label>
+                </div>
+                <button type="button" class="btn btn-primary btn-lg btn-block mt-3"
+                        onclick="calculate('sol')">Calculate</button>
+              </form>
+              <div id="result-sol" class="result-box mt-3"></div>
+            </div>
+
           </div>
-          <!-- TESLA Tab -->
-          <div class="tab-pane fade" id="tsla" role="tabpanel" aria-labelledby="tsla-tab">
-            <form id="form-tsla" class="mt-3">
-              <div class="form-group">
-                <label for="costBasis-tsla">Cost Basis (adj) ($):</label>
-                <input type="number" class="form-control" id="costBasis-tsla" placeholder="Enter cost basis">
-              </div>
-              <div class="form-group">
-                <label for="amountHeld-tsla">Amount Held (Qty):</label>
-                <input type="number" class="form-control" id="amountHeld-tsla" placeholder="Enter amount held">
-              </div>
-              <div class="form-group">
-                <label for="salePrice-tsla">Sale Price ($):</label>
-                <input type="number" class="form-control" id="salePrice-tsla" placeholder="Enter sale price">
-              </div>
-              <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="includeCostBasis-tsla">
-                <label class="form-check-label" for="includeCostBasis-tsla">Include Original Cost Basis</label>
-              </div>
-              <button type="button" class="btn btn-primary mt-3" onclick="calculate('tsla')">Calculate</button>
-            </form>
-            <div id="result-tsla" class="mt-4"></div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="app-footer py-3 text-center small text-muted bg-white border-top">
+      © {{ (now().year if now else '') or '' }} Capital Gains Tax Calculator
+    </footer>
+  </div>
+
+  <!-- JS (defer so it doesn't block rendering) -->
+  <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script defer src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    function calculate(asset) {
+      const costBasis = document.getElementById(`costBasis-${asset}`).value;
+      const amountHeld = document.getElementById(`amountHeld-${asset}`).value;
+      const salePrice  = document.getElementById(`salePrice-${asset}`).value;
+      const includeCostBasis = document.getElementById(`includeCostBasis-${asset}`).checked;
+
+      const payload = { asset, costBasis, amountHeld, salePrice, includeCostBasis };
+
+      fetch('/calculate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(r => r.json())
+      .then(data => {
+        const el = document.getElementById(`result-${asset}`);
+        el.innerHTML = `
+          <h5 class="mb-2">Short-Term Gains</h5>
+          <div class="row no-gutters mb-2">
+            <div class="col-6">Tax Rate</div><div class="col-6 text-right"><strong>${data.shortTerm.taxRate}%</strong></div>
+            <div class="col-6">Net Gains</div><div class="col-6 text-right">$${data.shortTerm.netGains.toFixed(2)}</div>
+            <div class="col-6">Tax Owed</div><div class="col-6 text-right">$${data.shortTerm.taxOwed.toFixed(2)}</div>
+            <div class="col-6">Net Proceeds</div><div class="col-6 text-right">$${data.shortTerm.netProceeds.toFixed(2)}</div>
           </div>
-          <!-- SOL Tab -->
-          <div class="tab-pane fade" id="sol" role="tabpanel" aria-labelledby="sol-tab">
-            <form id="form-sol" class="mt-3">
-              <div class="form-group">
-                <label for="costBasis-sol">Cost Basis (adj) ($):</label>
-                <input type="number" class="form-control" id="costBasis-sol" placeholder="Enter cost basis">
-              </div>
-              <div class="form-group">
-                <label for="amountHeld-sol">Amount Held (Qty):</label>
-                <input type="number" class="form-control" id="amountHeld-sol" placeholder="Enter amount held">
-              </div>
-              <div class="form-group">
-                <label for="salePrice-sol">Sale Price ($):</label>
-                <input type="number" class="form-control" id="salePrice-sol" placeholder="Enter sale price">
-              </div>
-              <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="includeCostBasis-sol">
-                <label class="form-check-label" for="includeCostBasis-sol">Include Original Cost Basis</label>
-              </div>
-              <button type="button" class="btn btn-primary mt-3" onclick="calculate('sol')">Calculate</button>
-            </form>
-            <div id="result-sol" class="mt-4"></div>
+          <hr class="my-2">
+          <h5 class="mb-2">Long-Term Gains</h5>
+          <div class="row no-gutters mb-2">
+            <div class="col-6">Tax Rate</div><div class="col-6 text-right"><strong>${data.longTerm.taxRate}%</strong></div>
+            <div class="col-6">Net Gains</div><div class="col-6 text-right">$${data.longTerm.netGains.toFixed(2)}</div>
+            <div class="col-6">Tax Owed</div><div class="col-6 text-right">$${data.longTerm.taxOwed.toFixed(2)}</div>
+            <div class="col-6">Net Proceeds</div><div class="col-6 text-right">$${data.longTerm.netProceeds.toFixed(2)}</div>
           </div>
-        </div>
-    </div>
-    
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <!-- Inline JS for demonstration; you can also separate it into static/js/script.js -->
-    <script>
-      function calculate(asset) {
-        // Get values from the form fields based on asset (btc, tsla, sol)
-        const costBasis = document.getElementById(`costBasis-${asset}`).value;
-        const amountHeld = document.getElementById(`amountHeld-${asset}`).value;
-        const salePrice = document.getElementById(`salePrice-${asset}`).value;
-        // Get the state of the "Include Original Cost Basis" toggle
-        const includeCostBasis = document.getElementById(`includeCostBasis-${asset}`).checked;
-        
-        // Prepare the data payload for the Python backend
-        const payload = {
-          asset: asset,
-          costBasis: costBasis,
-          amountHeld: amountHeld,
-          salePrice: salePrice,
-          includeCostBasis: includeCostBasis
-        };
-        
-        // Call the Flask endpoint with fetch
-        fetch('/calculate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        })
-        .then(response => response.json())
-        .then(data => {
-          const resultDiv = document.getElementById(`result-${asset}`);
-          resultDiv.innerHTML = `
-            <h4>Short-Term Gains</h4>
-            <p>Tax Rate: ${data.shortTerm.taxRate}%</p>
-            <p>Net Gains: $${data.shortTerm.netGains.toFixed(2)}</p>
-            <p>Tax Owed: $${data.shortTerm.taxOwed.toFixed(2)}</p>
-            <p>Net Proceeds: $${data.shortTerm.netProceeds.toFixed(2)}</p>
-            <hr>
-            <h4>Long-Term Gains</h4>
-            <p>Tax Rate: ${data.longTerm.taxRate}%</p>
-            <p>Net Gains: $${data.longTerm.netGains.toFixed(2)}</p>
-            <p>Tax Owed: $${data.longTerm.taxOwed.toFixed(2)}</p>
-            <p>Net Proceeds: $${data.longTerm.netProceeds.toFixed(2)}</p>
-            <hr>
-            <h4>Break-Even Price</h4>
-            <p>$${data.breakEven.toFixed(2)}</p>
-            <p><small>Included Original Cost Basis: ${data.includeCostBasis}</small></p>
-          `;
-        })
-        .catch(error => console.error('Error:', error));
-      }
-    </script>
+          <hr class="my-2">
+          <h5 class="mb-2">Break-Even Price</h5>
+          <p class="lead mb-1">$${data.breakEven.toFixed(2)}</p>
+          <p class="mb-0"><small>Included Original Cost Basis: ${data.includeCostBasis}</small></p>
+        `;
+      })
+      .catch(err => console.error(err));
+    }
+  </script>
 </body>
 </html>
