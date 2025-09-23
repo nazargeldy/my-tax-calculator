@@ -1,70 +1,97 @@
+/* Base + mobile-first scaling */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+}
 
 body {
-    background-color: #f5f8fa;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: #333;
-    margin: 0;
-    padding: 0;
-  }
-  
-  /* Main container styling */
-  .container {
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 30px;
-    padding: 30px;
-  }
-  
-  /* Headings */
-  h1, h2, h3, h4 {
-    font-weight: 600;
-    color: #333;
-  }
-  
-  /* Nav-tabs customization */
-  .nav-tabs {
-    border-bottom: none;
-    margin-bottom: 20px;
-  }
-  
-  .nav-tabs .nav-link {
-    border: none;
-    background: transparent;
-    padding: 10px 20px;
-    font-weight: 600;
-    border-bottom: 2px solid transparent;
-    color: #333;
-  }
-  
-  .nav-tabs .nav-link.active {
-    color: #06b0a8; /* Robinhood-inspired green */
-    border-bottom: 2px solid #06b0a8;
-  }
-  
-  /* Form input styling */
-  .form-control {
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    box-shadow: none;
-  }
-  
-  /* Button styling */
-  .btn-primary {
-    background-color: #06b0a8;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-  }
-  
-  .btn-primary:hover {
-    background-color: #05a096;
-  }
-  
-  
-  .form-check {
-    margin-top: 15px;
-  }
-  
+  margin: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #0f172a;            /* darker, better contrast */
+  background-color: #f5f8fa;
+  -webkit-text-size-adjust: 100%;
+  /* Scales font size between 15px and 18px depending on viewport */
+  font-size: clamp(15px, 1.8vw, 18px);
+  line-height: 1.5;
+}
+
+.bg-app { background-color: #f5f8fa; }
+
+/* Full-height app card area */
+.app-wrapper { min-height: 100svh; } /* iOS/Android small viewport height */
+
+/* Center content & constrain width on large screens */
+.app-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+  padding: 16px;
+  max-width: 720px; /* keeps it nice on tablets/desktop */
+}
+
+/* Tabs */
+.nav-tabs {
+  border-bottom: none;
+}
+.nav-tabs .nav-link {
+  border: none;
+  background: transparent;
+  padding: 10px 6px;           /* tighter on mobile */
+  font-weight: 600;
+  color: #334155;
+  border-bottom: 2px solid transparent;
+}
+.nav-tabs .nav-link.active {
+  color: #06b0a8;
+  border-bottom-color: #06b0a8;
+}
+
+/* Form controls — larger touch targets */
+.form-control {
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  padding: 12px 14px;
+}
+.form-control-lg {
+  font-size: 1rem;            /* big enough on mobile */
+  min-height: 44px;           /* Apple HIG */
+}
+
+.custom-control-label {
+  line-height: 1.4;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: #06b0a8;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-weight: 600;
+}
+.btn-primary:hover { background-color: #05a096; }
+
+/* Result box */
+.result-box {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px;
+  overflow-wrap: anywhere;
+}
+
+/* Header/Footer borders */
+.app-header,
+.app-footer {
+  background: #fff;
+}
+
+/* More generous spacing on bigger screens */
+@media (min-width: 768px) {
+  .app-card { padding: 22px; }
+  .nav-tabs .nav-link { padding: 10px 16px; }
+}
