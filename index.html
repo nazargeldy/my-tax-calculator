@@ -7,24 +7,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-  <!-- Your styles: STATIC path, no url_for -->
-  <link rel="stylesheet" href="static/css/styles.css">
+  <!-- Your styles (optional; if you have this file) -->
+  <link rel="stylesheet" href="static/css/static.css">
 </head>
 <body class="bg-app">
-
   <div class="app-wrapper d-flex flex-column min-vh-100">
 
+    <!-- HEADER -->
     <header class="app-header py-3 px-3 px-md-4 bg-white border-bottom">
       <h1 class="h4 mb-0 text-center">Capital Gains Tax Calculator</h1>
     </header>
 
+    <!-- MAIN -->
     <main class="flex-fill">
       <div class="container-fluid py-3">
         <section class="app-card mx-auto">
 
-          <!-- Tabs -->
+          <!-- TABS -->
           <ul class="nav nav-tabs justify-content-between mb-3" id="assetTabs" role="tablist">
             <li class="nav-item flex-fill text-center">
               <a class="nav-link active" id="btc-tab" data-toggle="tab" href="#btc" role="tab"
@@ -139,23 +141,82 @@
               </form>
               <div id="result-sol" class="result-box mt-3"></div>
             </div>
-
           </div>
+
         </section>
       </div>
     </main>
 
+    <!-- FOOTER -->
     <footer class="app-footer py-3 text-center small text-muted bg-white border-top">
       © <span id="year"></span> Capital Gains Tax Calculator
     </footer>
   </div>
 
-  <!-- JS -->
+  <!-- JS libs -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-  <!-- Your calculator logic -->
-  <script src="static/js/main.js"></script>
+  <!-- INLINE CALC LOGIC -->
+  <script>
+    // set footer year
+    document.addEventListener("DOMContentLoaded", function () {
+      const y = document.getElementById("year");
+      if (y) y.textContent = new Date().getFullYear();
+    });
+
+    function calculate(asset) {
+      const costBasis  = parseFloat(document.getElementById(`costBasis-${asset}`).value) || 0;
+      const amountHeld = parseFloat(document.getElementById(`amountHeld-${asset}`).value) || 0;
+      const salePrice  = parseFloat(document.getElementById(`salePrice-${asset}`).value) || 0;
+      const includeCB  = document.getElementById(`includeCostBasis-${asset}`).checked;
+
+      if (!amountHeld || !salePrice) {
+        alert("Please enter at least Amount Held and Sale Price.");
+        return;
+      }
+
+      const proceeds = salePrice * amountHeld;
+      const basis    = includeCB ? costBasis : 0;
+      const gain     = proceeds - basis;
+
+      const shortRate = 37;  // %
+      const longRate  = 20;  // %
+
+      const shortNetGains    = gain;
+      const shortTaxOwed     = shortNetGains * (shortRate / 100);
+      const shortNetProceeds = proceeds - shortTaxOwed;
+
+      const longNetGains     = gain;
+      const longTaxOwed      = longNetGains * (longRate / 100);
+      const longNetProceeds  = proceeds - longTaxOwed;
+
+      const breakEven        = amountHeld ? basis / amountHeld : 0;
+
+      const el = document.getElementById(`result-${asset}`);
+      el.innerHTML = `
+        <h5 class="mb-2">Short-Term Gains</h5>
+        <div class="row no-gutters mb-2">
+          <div class="col-6">Tax Rate</div><div class="col-6 text-right"><strong>${shortRate}%</strong></div>
+          <div class="col-6">Net Gains</div><div class="col-6 text-right">$${shortNetGains.toFixed(2)}</div>
+          <div class="col-6">Tax Owed</div><div class="col-6 text-right">$${shortTaxOwed.toFixed(2)}</div>
+          <div class="col-6">Net Proceeds</div><div class="col-6 text-right">$${shortNetProceeds.toFixed(2)}</div>
+        </div>
+        <hr class="my-2">
+        <h5 class="mb-2">Long-Term Gains</h5>
+        <div class="row no-gutters mb-2">
+          <div class="col-6">Tax Rate</div><div class="col-6 text-right"><strong>${longRate}%</strong></div>
+          <div class="col-6">Net Gains</div><div class="col-6 text-right">$${longNetGains.toFixed(2)}</div>
+          <div class="col-6">Tax Owed</div><div class="col-6 text-right">$${longTaxOwed.toFixed(2)}</div>
+          <div class="col-6">Net Proceeds</div><div class="col-6 text-right">$${longNetProceeds.toFixed(2)}</div>
+        </div>
+        <hr class="my-2">
+        <h5 class="mb-2">Break-Even Price</h5>
+        <p class="lead mb-1">$${breakEven.toFixed(2)}</p>
+        <p class="mb-0"><small>Included Original Cost Basis: ${includeCB}</small></p>
+      `;
+    }
+  </script>
 </body>
 </html>
