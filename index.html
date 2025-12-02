@@ -4,18 +4,16 @@
   <meta charset="utf-8">
   <title>Capital Gains Tax Calculator</title>
 
-  <!-- CRITICAL for mobile sizing -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-  <!-- Your styles -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <!-- Your styles: STATIC path, no url_for -->
+  <link rel="stylesheet" href="static/css/styles.css">
 </head>
 <body class="bg-app">
 
-  <!-- Full-height wrapper so content fills the screen -->
   <div class="app-wrapper d-flex flex-column min-vh-100">
 
     <header class="app-header py-3 px-3 px-md-4 bg-white border-bottom">
@@ -23,7 +21,6 @@
     </header>
 
     <main class="flex-fill">
-      <!-- Use container-fluid on mobile, constrain with max-width via CSS -->
       <div class="container-fluid py-3">
         <section class="app-card mx-auto">
 
@@ -149,56 +146,16 @@
     </main>
 
     <footer class="app-footer py-3 text-center small text-muted bg-white border-top">
-      © {{ (now().year if now else '') or '' }} Capital Gains Tax Calculator
+      © <span id="year"></span> Capital Gains Tax Calculator
     </footer>
   </div>
 
-  <!-- JS (defer so it doesn't block rendering) -->
-  <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-  <script defer src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-  <script>
-    function calculate(asset) {
-      const costBasis = document.getElementById(`costBasis-${asset}`).value;
-      const amountHeld = document.getElementById(`amountHeld-${asset}`).value;
-      const salePrice  = document.getElementById(`salePrice-${asset}`).value;
-      const includeCostBasis = document.getElementById(`includeCostBasis-${asset}`).checked;
-
-      const payload = { asset, costBasis, amountHeld, salePrice, includeCostBasis };
-
-      fetch('/calculate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })
-      .then(r => r.json())
-      .then(data => {
-        const el = document.getElementById(`result-${asset}`);
-        el.innerHTML = `
-          <h5 class="mb-2">Short-Term Gains</h5>
-          <div class="row no-gutters mb-2">
-            <div class="col-6">Tax Rate</div><div class="col-6 text-right"><strong>${data.shortTerm.taxRate}%</strong></div>
-            <div class="col-6">Net Gains</div><div class="col-6 text-right">$${data.shortTerm.netGains.toFixed(2)}</div>
-            <div class="col-6">Tax Owed</div><div class="col-6 text-right">$${data.shortTerm.taxOwed.toFixed(2)}</div>
-            <div class="col-6">Net Proceeds</div><div class="col-6 text-right">$${data.shortTerm.netProceeds.toFixed(2)}</div>
-          </div>
-          <hr class="my-2">
-          <h5 class="mb-2">Long-Term Gains</h5>
-          <div class="row no-gutters mb-2">
-            <div class="col-6">Tax Rate</div><div class="col-6 text-right"><strong>${data.longTerm.taxRate}%</strong></div>
-            <div class="col-6">Net Gains</div><div class="col-6 text-right">$${data.longTerm.netGains.toFixed(2)}</div>
-            <div class="col-6">Tax Owed</div><div class="col-6 text-right">$${data.longTerm.taxOwed.toFixed(2)}</div>
-            <div class="col-6">Net Proceeds</div><div class="col-6 text-right">$${data.longTerm.netProceeds.toFixed(2)}</div>
-          </div>
-          <hr class="my-2">
-          <h5 class="mb-2">Break-Even Price</h5>
-          <p class="lead mb-1">$${data.breakEven.toFixed(2)}</p>
-          <p class="mb-0"><small>Included Original Cost Basis: ${data.includeCostBasis}</small></p>
-        `;
-      })
-      .catch(err => console.error(err));
-    }
-  </script>
+  <!-- Your calculator logic -->
+  <script src="static/js/main.js"></script>
 </body>
 </html>
